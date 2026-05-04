@@ -1,202 +1,580 @@
+<!DOCTYPE html>
+<!-- saved from url=(0060)file:///C:/Users/omorel/Downloads/planning_expedition_2.html -->
+<html lang="fr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Planning Expédition</title>
+<link href="./index_files/css2" rel="stylesheet">
 <style>
-*{box-sizing:border-box;margin:0;padding:0;}
-.app{display:flex;flex-direction:column;border-radius:12px;overflow:hidden;border:0.5px solid #dce3ee;background:white;}
-.topbar{background:#1a2235;padding:10px 16px;display:flex;align-items:center;gap:12px;}
-.topbar-logo{background:#2dd4a0;color:#04342C;font-weight:600;font-size:12px;padding:4px 10px;border-radius:6px;}
-.topbar-title{font-weight:500;font-size:14px;color:white;}
-.breadcrumb{padding:7px 16px;font-size:12px;color:#6b7a99;border-bottom:0.5px solid #dce3ee;background:white;display:flex;gap:5px;}
-.main{display:flex;gap:12px;padding:12px;background:white;min-height:480px;align-items:flex-start;}
-.col-portfolio{width:210px;flex-shrink:0;display:flex;flex-direction:column;gap:8px;}
-.col-semis{display:flex;flex:1;gap:10px;}
-.col-semi{flex:1;display:flex;flex-direction:column;gap:8px;min-width:0;}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  background: #fff;
+  color: #1a2235;
+  overflow-x: hidden;
+}
+body.dragging-active { user-select: none; cursor: grabbing !important; }
+body.dragging-active * { cursor: grabbing !important; }
 
-.col-header{background:white;border-radius:10px;border:0.5px solid #dce3ee;padding:10px 12px;}
-.col-header-row{display:flex;align-items:center;justify-content:space-between;}
-.col-header-left{display:flex;align-items:center;gap:8px;}
-.plus-btn{width:22px;height:22px;border-radius:50%;border:1.5px solid #1a2235;display:flex;align-items:center;justify-content:center;font-size:15px;color:#1a2235;cursor:pointer;flex-shrink:0;line-height:1;}
-.col-title{font-weight:600;font-size:13px;color:#1a2235;}
-.sub-counter{font-size:10px;color:#6b7a99;margin-top:2px;}
-.col-header-right{display:flex;align-items:center;gap:6px;}
-.counter{font-size:11px;color:#6b7a99;}
-.three-dots{font-size:16px;color:#6b7a99;cursor:pointer;}
+.topbar {
+  background: #1a2235; padding: 10px 20px;
+  display: flex; align-items: center; gap: 14px;
+  position: sticky; top: 0; z-index: 100;
+}
+.topbar-logo {
+  background: #2dd4a0; color: #04342C;
+  font-weight: 600; font-size: 12px;
+  padding: 4px 10px; border-radius: 6px;
+}
+.topbar-title { font-weight: 500; font-size: 14px; color: white; }
+.topbar-week { margin-left: auto; font-size: 12px; color: #8fa3c0; }
 
-.cards-list{display:flex;flex-direction:column;gap:6px;}
+.breadcrumb {
+  padding: 7px 20px; font-size: 12px; color: #6b7a99;
+  border-bottom: 0.5px solid #dce3ee; background: white;
+  display: flex; gap: 5px; align-items: center;
+}
+.breadcrumb .current { color: #1a2235; font-weight: 500; }
 
-.card{background:#E8EFF9;border-radius:8px;border:0.5px solid #c5d3e8;padding:9px 22px 9px 8px;cursor:grab;display:flex;gap:7px;align-items:flex-start;position:relative;}
-.dd{display:grid;grid-template-columns:repeat(2,3px);gap:2.5px;padding-top:3px;flex-shrink:0;}
-.dd span{width:3px;height:3px;border-radius:50%;background:#8fa3c0;display:block;}
-.cb{flex:1;min-width:0;}
-.cr{font-size:12px;font-weight:500;color:#1a2235;margin-bottom:1px;}
-.cc{font-size:11px;color:#4a5a7a;margin-bottom:4px;}
-.cf{font-size:11px;color:#6b7a99;}
-.cx{position:absolute;top:6px;right:8px;font-size:11px;color:#8fa3c0;cursor:pointer;}
+.main {
+  display: flex; gap: 12px; padding: 14px;
+  background: white; min-height: calc(100vh - 68px);
+  align-items: flex-start; overflow-x: auto;
+}
+.col-portfolio { width: 220px; flex-shrink: 0; display: flex; flex-direction: column; gap: 8px; }
+.col-semis { display: flex; flex: 1; gap: 10px; align-items: flex-start; min-width: 0; }
+.col-semi { flex: 1; display: flex; flex-direction: column; gap: 8px; min-width: 180px; }
+
+.col-header {
+  background: white; border-radius: 10px;
+  border: 0.5px solid #dce3ee; padding: 10px 12px;
+  user-select: none;
+}
+.col-header-row { display: flex; align-items: center; justify-content: space-between; }
+.col-header-left { display: flex; align-items: center; gap: 8px; }
+.plus-btn {
+  width: 22px; height: 22px; border-radius: 50%;
+  border: 1.5px solid #1a2235;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; color: #1a2235; cursor: pointer;
+  flex-shrink: 0; line-height: 1;
+}
+.col-title { font-weight: 600; font-size: 13px; color: #1a2235; line-height: 1.2; }
+.sub-counter { font-size: 10px; color: #6b7a99; margin-top: 2px; }
+.col-header-right { display: flex; align-items: center; gap: 6px; }
+.counter { font-size: 11px; color: #6b7a99; white-space: nowrap; }
+.three-dots { font-size: 16px; color: #6b7a99; cursor: pointer; padding: 0 2px; }
+
+.cards-list {
+  display: flex; flex-direction: column; gap: 6px;
+  min-height: 48px; border-radius: 8px; padding: 2px;
+  transition: background 0.12s;
+}
+.cards-list.drop-target {
+  background: #f0f5ff;
+  outline: 1.5px dashed #b0bdd4;
+  outline-offset: -2px;
+}
+
+.card {
+  background: #E8EFF9;
+  border-radius: 8px;
+  border: 0.5px solid #c5d3e8;
+  padding: 9px 26px 9px 8px;
+  display: flex; gap: 7px; align-items: flex-start;
+  position: relative;
+  user-select: none; -webkit-user-select: none;
+  cursor: grab;
+  transition: box-shadow 0.12s;
+}
+.card:hover { box-shadow: 0 2px 8px rgba(26,34,53,0.10); }
+.card.is-ghost { opacity: 0.25; pointer-events: none; }
+
+.dd {
+  display: grid; grid-template-columns: repeat(2, 3px);
+  gap: 2.5px; padding-top: 3px; flex-shrink: 0;
+}
+.dd span { width: 3px; height: 3px; border-radius: 50%; background: #8fa3c0; display: block; }
+
+.cb { flex: 1; min-width: 0; }
+.cr { font-size: 12px; font-weight: 500; color: #1a2235; margin-bottom: 2px; }
+.cc { font-size: 11px; color: #4a5a7a; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cf { font-size: 11px; color: #6b7a99; }
+
+.cx {
+  position: absolute; top: 6px; right: 8px;
+  font-size: 12px; color: #8fa3c0; cursor: pointer;
+  line-height: 1; padding: 1px 3px; border-radius: 3px;
+  z-index: 2;
+}
+.cx:hover { color: #c0392b; background: #fdecea; }
+
+#drag-clone {
+  position: fixed; pointer-events: none; z-index: 9999;
+  opacity: 0.93;
+  transform: rotate(1.5deg) scale(1.03);
+  box-shadow: 0 8px 24px rgba(26,34,53,0.18);
+  border-radius: 8px;
+  background: #E8EFF9;
+  border: 0.5px solid #c5d3e8;
+  padding: 9px 26px 9px 8px;
+  display: flex; gap: 7px; align-items: flex-start;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px; color: #1a2235;
+}
+
+.insert-line {
+  height: 3px; background: #378ADD;
+  border-radius: 2px; margin: 0 2px;
+  pointer-events: none; flex-shrink: 0;
+}
+
+.empty-state {
+  padding: 18px 10px; text-align: center;
+  font-size: 11px; color: #b0bdd4; pointer-events: none;
+}
 </style>
+</head>
+<body class="">
 
-<div class="app">
-  <div class="topbar">
-    <span class="topbar-logo">FLEXIO</span>
-    <span style="color:#4a5568">›</span>
-    <span class="topbar-title">Planning expédition · Semaine 18</span>
-  </div>
-  <div class="breadcrumb">
-    <span>Accueil</span><span>›</span><span>Expéditions</span><span>›</span><span style="color:#1a2235;font-weight:500;">Planning semaine</span>
-  </div>
-  <div class="main">
+<script>
+// =====================================================
+// 👉 MODIFIER ICI POUR CHANGER LA SEMAINE DE DÉMO
+// =====================================================
+const JS_WEEK_CONFIG = {
+  label: "Semaine 18 · 29 avr – 03 mai 2025",
+  number: "S18"
+};
 
-    <!-- Portefeuille -->
-    <div class="col-portfolio">
-      <div class="col-header">
-        <div class="col-header-row">
-          <div class="col-header-left">
-            <div class="plus-btn">+</div>
-            <div>
-              <div class="col-title">Portefeuille</div>
-              <div class="sub-counter">2 330 kg · 12.1 m³</div>
-            </div>
-          </div>
-          <div class="col-header-right">
-            <span class="counter">1–5/5 ↻</span>
-            <span class="three-dots">⋮</span>
-          </div>
-        </div>
-      </div>
-      <div class="cards-list">
-        <div class="card">
-          <div class="dd"><span></span><span></span><span></span><span></span><span></span><span></span></div>
-          <div class="cb">
-            <div class="cr">CMD-0041</div>
-            <div class="cc">Dupont Industrie</div>
-            <div class="cf">06/05 · Route · 320 kg · 1.8 m³</div>
-          </div>
-        </div>
-        <div class="card">
-          <div class="dd"><span></span><span></span><span></span><span></span><span></span><span></span></div>
-          <div class="cb">
-            <div class="cr">CMD-0043</div>
-            <div class="cc">Leroy Matériaux</div>
-            <div class="cf">07/05 · Route · 780 kg · 4.1 m³</div>
-          </div>
-        </div>
-        <div class="card">
-          <div class="dd"><span></span><span></span><span></span><span></span><span></span><span></span></div>
-          <div class="cb">
-            <div class="cr">CMD-0045</div>
-            <div class="cc">Giraud SAS</div>
-            <div class="cf">08/05 · Express · 440 kg · 2.2 m³</div>
-          </div>
-        </div>
-        <div class="card">
-          <div class="dd"><span></span><span></span><span></span><span></span><span></span><span></span></div>
-          <div class="cb">
-            <div class="cr">CMD-0046</div>
-            <div class="cc">Bernard & Co</div>
-            <div class="cf">08/05 · Route · 390 kg · 2.0 m³</div>
-          </div>
-        </div>
-        <div class="card">
-          <div class="dd"><span></span><span></span><span></span><span></span><span></span><span></span></div>
-          <div class="cb">
-            <div class="cr">CMD-0048</div>
-            <div class="cc">Favre Industrie</div>
-            <div class="cf">09/05 · Route · 400 kg · 2.0 m³</div>
-          </div>
-        </div>
-      </div>
-    </div>
+// =====================================================
+// DONNÉES COMMANDES
+// =====================================================
+const COMMANDES_DATA = [
+  { id: "CMD-0041", client: "Dupont Industrie",   dateExp: "29/04", modeExp: "Route",   poids: 320,  volume: 1.8 },
+  { id: "CMD-0042", client: "Martin & Fils",      dateExp: "29/04", modeExp: "Express", poids: 510,  volume: 2.4 },
+  { id: "CMD-0043", client: "Leroy Matériaux",    dateExp: "30/04", modeExp: "Route",   poids: 780,  volume: 4.1 },
+  { id: "CMD-0044", client: "Aubert Logistique",  dateExp: "30/04", modeExp: "Route",   poids: 1200, volume: 6.0 },
+  { id: "CMD-0045", client: "Giraud SAS",         dateExp: "01/05", modeExp: "Express", poids: 440,  volume: 2.2 },
+  { id: "CMD-0046", client: "Bernard & Co",       dateExp: "01/05", modeExp: "Route",   poids: 390,  volume: 2.0 },
+  { id: "CMD-0047", client: "Renard & Associés",  dateExp: "02/05", modeExp: "Route",   poids: 980,  volume: 4.8 },
+  { id: "CMD-0048", client: "Favre Industrie",    dateExp: "02/05", modeExp: "Route",   poids: 400,  volume: 2.0 },
+  { id: "CMD-0049", client: "Morin Négoce",       dateExp: "03/05", modeExp: "Express", poids: 660,  volume: 3.3 },
+  { id: "CMD-0050", client: "Petit Distribution", dateExp: "03/05", modeExp: "Route",   poids: 290,  volume: 1.5 },
+];
 
-    <!-- Semis -->
-    <div class="col-semis">
+const NB_SEMIS = 3;
 
-      <!-- Semi 1 -->
-      <div class="col-semi">
-        <div class="col-header">
-          <div class="col-header-row">
-            <div class="col-header-left">
-              <div class="plus-btn">+</div>
-              <div>
-                <div class="col-title">Semi 1</div>
-                <div class="sub-counter">510 kg · 2.4 m³</div>
-              </div>
-            </div>
-            <div class="col-header-right">
-              <span class="counter">1–1/1 ↻</span>
-              <span class="three-dots">⋮</span>
-            </div>
-          </div>
-        </div>
-        <div class="cards-list">
-          <div class="card">
-            <div class="dd"><span></span><span></span><span></span><span></span><span></span><span></span></div>
-            <div class="cb">
-              <div class="cr">CMD-0042</div>
-              <div class="cc">Martin & Fils</div>
-              <div class="cf">06/05 · Rang 1 · 510 kg · 2.4 m³</div>
-            </div>
-            <span class="cx">✕</span>
-          </div>
-        </div>
-      </div>
+const state = {
+  semis: Array.from({length: NB_SEMIS}, () => []),
+  portfolio: COMMANDES_DATA.map(c => c.id)
+};
 
-      <!-- Semi 2 -->
-      <div class="col-semi">
-        <div class="col-header">
-          <div class="col-header-row">
-            <div class="col-header-left">
-              <div class="plus-btn">+</div>
-              <div>
-                <div class="col-title">Semi 2</div>
-                <div class="sub-counter">2 180 kg · 8.4 m³</div>
-              </div>
-            </div>
-            <div class="col-header-right">
-              <span class="counter">1–2/2 ↻</span>
-              <span class="three-dots">⋮</span>
-            </div>
-          </div>
-        </div>
-        <div class="cards-list">
-          <div class="card">
-            <div class="dd"><span></span><span></span><span></span><span></span><span></span><span></span></div>
-            <div class="cb">
-              <div class="cr">CMD-0044</div>
-              <div class="cc">Aubert Logistique</div>
-              <div class="cf">07/05 · Rang 1 · 1 200 kg · 6.0 m³</div>
-            </div>
-            <span class="cx">✕</span>
-          </div>
-          <div class="card">
-            <div class="dd"><span></span><span></span><span></span><span></span><span></span><span></span></div>
-            <div class="cb">
-              <div class="cr">CMD-0047</div>
-              <div class="cc">Renard & Co</div>
-              <div class="cf">07/05 · Rang 2 · 980 kg · 2.4 m³</div>
-            </div>
-            <span class="cx">✕</span>
-          </div>
-        </div>
-      </div>
+function getCmdById(id) { return COMMANDES_DATA.find(c => c.id === id); }
+function fmtPoids(p) { return p >= 1000 ? (p/1000).toFixed(1).replace('.',',') + ' t' : p + ' kg'; }
+function fmtVol(v)   { return v.toFixed(1).replace('.',',') + ' m³'; }
+</script>
 
-      <!-- Semi 3 -->
-      <div class="col-semi">
-        <div class="col-header">
-          <div class="col-header-row">
-            <div class="col-header-left">
-              <div class="plus-btn">+</div>
-              <div>
-                <div class="col-title">Semi 3</div>
-                <div class="sub-counter">0 kg · 0 m³</div>
-              </div>
-            </div>
-            <div class="col-header-right">
-              <span class="counter">0/0 ↻</span>
-              <span class="three-dots">⋮</span>
-            </div>
-          </div>
-        </div>
-        <div class="cards-list"></div>
-      </div>
-
-    </div>
-  </div>
+<div class="topbar">
+  <span class="topbar-logo">divaito</span>
+  <span style="color:#4a5568">›</span>
+  <span class="topbar-title">Planning expédition</span>
+  <span class="topbar-week" id="topbar-week">Semaine 18 · 29 avr – 03 mai 2025</span>
 </div>
+<div class="breadcrumb">
+  <span>Accueil</span><span>›</span><span>Expéditions</span><span>›</span>
+  <span class="current" id="breadcrumb-week">Planning S18</span>
+</div>
+
+<div class="main" id="main">
+  <div class="col-portfolio">
+    <div class="col-header">
+      <div class="col-header-row">
+        <div class="col-header-left">
+          <div class="plus-btn">+</div>
+          <div>
+            <div class="col-title">Portefeuille</div>
+            <div class="sub-counter" id="portfolio-sub">5,7 t · 28,3 m³</div>
+          </div>
+        </div>
+        <div class="col-header-right">
+          <span class="counter" id="portfolio-counter">1–9/10 ↻</span>
+          <span class="three-dots">⋮</span>
+        </div>
+      </div>
+    </div>
+    <div class="cards-list" id="portfolio-list" data-zone="portfolio"><div class="card" data-id="CMD-0042" data-zone="portfolio">
+    <div class="dd"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+    <div class="cb">
+      <div class="cr">CMD-0042</div>
+      <div class="cc">Martin &amp; Fils</div>
+      <div class="cf">29/04 · Express · 510 kg · 2,4 m³</div>
+    </div>
+    </div><div class="card" data-id="CMD-0043" data-zone="portfolio">
+    <div class="dd"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+    <div class="cb">
+      <div class="cr">CMD-0043</div>
+      <div class="cc">Leroy Matériaux</div>
+      <div class="cf">30/04 · Route · 780 kg · 4,1 m³</div>
+    </div>
+    </div><div class="card" data-id="CMD-0044" data-zone="portfolio">
+    <div class="dd"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+    <div class="cb">
+      <div class="cr">CMD-0044</div>
+      <div class="cc">Aubert Logistique</div>
+      <div class="cf">30/04 · Route · 1,2 t · 6,0 m³</div>
+    </div>
+    </div><div class="card" data-id="CMD-0045" data-zone="portfolio">
+    <div class="dd"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+    <div class="cb">
+      <div class="cr">CMD-0045</div>
+      <div class="cc">Giraud SAS</div>
+      <div class="cf">01/05 · Express · 440 kg · 2,2 m³</div>
+    </div>
+    </div><div class="card" data-id="CMD-0046" data-zone="portfolio">
+    <div class="dd"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+    <div class="cb">
+      <div class="cr">CMD-0046</div>
+      <div class="cc">Bernard &amp; Co</div>
+      <div class="cf">01/05 · Route · 390 kg · 2,0 m³</div>
+    </div>
+    </div><div class="card" data-id="CMD-0047" data-zone="portfolio">
+    <div class="dd"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+    <div class="cb">
+      <div class="cr">CMD-0047</div>
+      <div class="cc">Renard &amp; Associés</div>
+      <div class="cf">02/05 · Route · 980 kg · 4,8 m³</div>
+    </div>
+    </div><div class="card" data-id="CMD-0048" data-zone="portfolio">
+    <div class="dd"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+    <div class="cb">
+      <div class="cr">CMD-0048</div>
+      <div class="cc">Favre Industrie</div>
+      <div class="cf">02/05 · Route · 400 kg · 2,0 m³</div>
+    </div>
+    </div><div class="card" data-id="CMD-0049" data-zone="portfolio">
+    <div class="dd"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+    <div class="cb">
+      <div class="cr">CMD-0049</div>
+      <div class="cc">Morin Négoce</div>
+      <div class="cf">03/05 · Express · 660 kg · 3,3 m³</div>
+    </div>
+    </div><div class="card" data-id="CMD-0050" data-zone="portfolio">
+    <div class="dd"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+    <div class="cb">
+      <div class="cr">CMD-0050</div>
+      <div class="cc">Petit Distribution</div>
+      <div class="cf">03/05 · Route · 290 kg · 1,5 m³</div>
+    </div>
+    </div></div>
+  </div>
+  <div class="col-semis" id="semis-container"><div class="col-semi"><div class="col-header">
+      <div class="col-header-row">
+        <div class="col-header-left">
+          <div class="plus-btn">+</div>
+          <div>
+            <div class="col-title">Semi 1</div>
+            <div class="sub-counter">320 kg · 1,8 m³</div>
+          </div>
+        </div>
+        <div class="col-header-right">
+          <span class="counter">1–1/1 ↻</span>
+          <span class="three-dots">⋮</span>
+        </div>
+      </div></div><div class="cards-list" data-zone="semi-1"><div class="card" data-id="CMD-0041" data-zone="semi-1">
+    <div class="dd"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+    <div class="cb">
+      <div class="cr">CMD-0041</div>
+      <div class="cc">Dupont Industrie</div>
+      <div class="cf">29/04 · Rang 1 · 320 kg · 1,8 m³</div>
+    </div>
+    <span class="cx">✕</span></div></div></div><div class="col-semi"><div class="col-header">
+      <div class="col-header-row">
+        <div class="col-header-left">
+          <div class="plus-btn">+</div>
+          <div>
+            <div class="col-title">Semi 2</div>
+            <div class="sub-counter">0 kg · 0 m³</div>
+          </div>
+        </div>
+        <div class="col-header-right">
+          <span class="counter">1–0/0 ↻</span>
+          <span class="three-dots">⋮</span>
+        </div>
+      </div></div><div class="cards-list" data-zone="semi-2"><div class="empty-state">Glisser une commande ici</div></div></div><div class="col-semi"><div class="col-header">
+      <div class="col-header-row">
+        <div class="col-header-left">
+          <div class="plus-btn">+</div>
+          <div>
+            <div class="col-title">Semi 3</div>
+            <div class="sub-counter">0 kg · 0 m³</div>
+          </div>
+        </div>
+        <div class="col-header-right">
+          <span class="counter">1–0/0 ↻</span>
+          <span class="three-dots">⋮</span>
+        </div>
+      </div></div><div class="cards-list" data-zone="semi-3"><div class="empty-state">Glisser une commande ici</div></div></div></div>
+</div>
+
+<div id="drag-clone" style="display: none; width: 216px; left: 331px; top: 189.8px;">
+    <div class="dd"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+    <div class="cb">
+      <div class="cr">CMD-0041</div>
+      <div class="cc">Dupont Industrie</div>
+      <div class="cf">29/04 · Route · 320 kg · 1,8 m³</div>
+    </div></div>
+
+<script>
+// ============================================================
+// RENDER
+// ============================================================
+function renderPortfolio() {
+  const list = document.getElementById('portfolio-list');
+  list.innerHTML = '';
+  const ids = state.portfolio;
+  if (ids.length === 0) {
+    list.innerHTML = '<div class="empty-state">Toutes les commandes sont affectées</div>';
+  } else {
+    ids.forEach(id => list.appendChild(makeCard(id, 'portfolio', null, null)));
+  }
+  const pt = ids.reduce((s,id)=>s+getCmdById(id).poids,0);
+  const vt = ids.reduce((s,id)=>s+getCmdById(id).volume,0);
+  document.getElementById('portfolio-counter').textContent = `1–${ids.length}/${COMMANDES_DATA.length} ↻`;
+  document.getElementById('portfolio-sub').textContent = ids.length > 0 ? `${fmtPoids(pt)} · ${fmtVol(vt)}` : '—';
+}
+
+function renderSemis() {
+  const container = document.getElementById('semis-container');
+  container.innerHTML = '';
+  state.semis.forEach((semiIds, si) => {
+    const sn = si + 1;
+    const pt = semiIds.reduce((s,id)=>s+getCmdById(id).poids,0);
+    const vt = semiIds.reduce((s,id)=>s+getCmdById(id).volume,0);
+    const nb = semiIds.length;
+
+    const col = document.createElement('div');
+    col.className = 'col-semi';
+
+    const hdr = document.createElement('div');
+    hdr.className = 'col-header';
+    hdr.innerHTML = `
+      <div class="col-header-row">
+        <div class="col-header-left">
+          <div class="plus-btn">+</div>
+          <div>
+            <div class="col-title">Semi ${sn}</div>
+            <div class="sub-counter">${nb>0 ? fmtPoids(pt)+' · '+fmtVol(vt) : '0 kg · 0 m³'}</div>
+          </div>
+        </div>
+        <div class="col-header-right">
+          <span class="counter">1–${nb}/${nb} ↻</span>
+          <span class="three-dots">⋮</span>
+        </div>
+      </div>`;
+    col.appendChild(hdr);
+
+    const list = document.createElement('div');
+    list.className = 'cards-list';
+    list.dataset.zone = `semi-${sn}`;
+    if (nb === 0) {
+      list.innerHTML = '<div class="empty-state">Glisser une commande ici</div>';
+    } else {
+      semiIds.forEach((id,idx) => list.appendChild(makeCard(id,'semi',sn,idx+1)));
+    }
+    col.appendChild(list);
+    container.appendChild(col);
+  });
+}
+
+function makeCard(id, zone, semiNum, rang) {
+  const cmd = getCmdById(id);
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.dataset.id = id;
+  card.dataset.zone = zone === 'portfolio' ? 'portfolio' : `semi-${semiNum}`;
+
+  const cfText = zone === 'portfolio'
+    ? `${cmd.dateExp} · ${cmd.modeExp} · ${fmtPoids(cmd.poids)} · ${fmtVol(cmd.volume)}`
+    : `${cmd.dateExp} · Rang ${rang} · ${fmtPoids(cmd.poids)} · ${fmtVol(cmd.volume)}`;
+
+  card.innerHTML = `
+    <div class="dd"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+    <div class="cb">
+      <div class="cr">${cmd.id}</div>
+      <div class="cc">${cmd.client}</div>
+      <div class="cf">${cfText}</div>
+    </div>
+    ${zone !== 'portfolio' ? '<span class="cx">✕</span>' : ''}`;
+
+  card.addEventListener('mousedown', onMouseDown);
+
+  if (zone !== 'portfolio') {
+    const cx = card.querySelector('.cx');
+    cx.addEventListener('mousedown', e => e.stopPropagation());
+    cx.addEventListener('click', () => unassign(id, semiNum));
+  }
+  return card;
+}
+
+function renderAll() { renderPortfolio(); renderSemis(); }
+
+// ============================================================
+// DRAG ENGINE
+// ============================================================
+let drag = null;
+
+function onMouseDown(e) {
+  if (e.button !== 0) return;
+  if (e.target.classList.contains('cx')) return;
+  e.preventDefault();
+
+  const card = e.currentTarget;
+  const rect = card.getBoundingClientRect();
+
+  const clone = document.getElementById('drag-clone');
+  clone.innerHTML = `
+    <div class="dd"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+    <div class="cb">
+      <div class="cr">${card.querySelector('.cr').textContent}</div>
+      <div class="cc">${card.querySelector('.cc').textContent}</div>
+      <div class="cf">${card.querySelector('.cf').textContent}</div>
+    </div>`;
+  clone.style.display = 'flex';
+  clone.style.width = rect.width + 'px';
+  clone.style.left = rect.left + 'px';
+  clone.style.top  = rect.top  + 'px';
+
+  drag = {
+    id: card.dataset.id,
+    srcZone: card.dataset.zone,
+    offsetX: e.clientX - rect.left,
+    offsetY: e.clientY - rect.top,
+    clone, ghost: card
+  };
+
+  card.classList.add('is-ghost');
+  document.body.classList.add('dragging-active');
+  document.addEventListener('mousemove', onMouseMove);
+  document.addEventListener('mouseup',   onMouseUp);
+}
+
+function onMouseMove(e) {
+  if (!drag) return;
+  drag.clone.style.left = (e.clientX - drag.offsetX) + 'px';
+  drag.clone.style.top  = (e.clientY - drag.offsetY) + 'px';
+
+  document.querySelectorAll('.cards-list').forEach(l => l.classList.remove('drop-target'));
+  removeInsertLine();
+
+  const hit = getZoneAt(e.clientX, e.clientY);
+  if (hit) {
+    hit.list.classList.add('drop-target');
+    showInsertLine(hit.list, hit.insertIdx);
+  }
+}
+
+function onMouseUp(e) {
+  if (!drag) return;
+  document.removeEventListener('mousemove', onMouseMove);
+  document.removeEventListener('mouseup',   onMouseUp);
+  document.querySelectorAll('.cards-list').forEach(l => l.classList.remove('drop-target'));
+  removeInsertLine();
+  drag.clone.style.display = 'none';
+  document.body.classList.remove('dragging-active');
+
+  const hit = getZoneAt(e.clientX, e.clientY);
+  if (hit) {
+    if (hit.zoneId !== drag.srcZone) {
+      moveCard(drag.id, drag.srcZone, hit.zoneId, hit.insertIdx);
+    } else {
+      reorderCard(drag.id, hit.zoneId, hit.insertIdx);
+    }
+  } else {
+    drag.ghost.classList.remove('is-ghost');
+  }
+  drag = null;
+}
+
+function getZoneAt(x, y) {
+  for (const list of document.querySelectorAll('.cards-list')) {
+    const r = list.getBoundingClientRect();
+    if (x >= r.left-10 && x <= r.right+10 && y >= r.top-10 && y <= r.bottom+10) {
+      const cards = [...list.querySelectorAll('.card:not(.is-ghost)')];
+      let insertIdx = cards.length;
+      for (let i = 0; i < cards.length; i++) {
+        const cr = cards[i].getBoundingClientRect();
+        if (y < cr.top + cr.height/2) { insertIdx = i; break; }
+      }
+      return { list, zoneId: list.dataset.zone, insertIdx };
+    }
+  }
+  return null;
+}
+
+function showInsertLine(list, insertIdx) {
+  const line = document.createElement('div');
+  line.className = 'insert-line'; line.id = 'insert-line';
+  const cards = [...list.querySelectorAll('.card:not(.is-ghost)')];
+  if (insertIdx >= cards.length) list.appendChild(line);
+  else list.insertBefore(line, cards[insertIdx]);
+}
+
+function removeInsertLine() {
+  const l = document.getElementById('insert-line');
+  if (l) l.remove();
+}
+
+// ============================================================
+// STATE MUTATIONS
+// ============================================================
+function moveCard(id, srcZone, targetZone, insertIdx) {
+  if (srcZone === 'portfolio') {
+    state.portfolio = state.portfolio.filter(i => i !== id);
+  } else {
+    const si = parseInt(srcZone.replace('semi-','')) - 1;
+    state.semis[si] = state.semis[si].filter(i => i !== id);
+  }
+  if (targetZone === 'portfolio') {
+    const newP = [];
+    for (const c of COMMANDES_DATA) {
+      if (c.id === id || state.portfolio.includes(c.id)) newP.push(c.id);
+    }
+    state.portfolio = newP;
+  } else {
+    const ti = parseInt(targetZone.replace('semi-','')) - 1;
+    if (!state.semis[ti].includes(id)) state.semis[ti].splice(insertIdx, 0, id);
+  }
+  renderAll();
+}
+
+function reorderCard(id, zoneId, insertIdx) {
+  const arr = zoneId === 'portfolio' ? state.portfolio : state.semis[parseInt(zoneId.replace('semi-',''))-1];
+  const from = arr.indexOf(id);
+  if (from === -1) { renderAll(); return; }
+  arr.splice(from, 1);
+  arr.splice(insertIdx > from ? insertIdx - 1 : insertIdx, 0, id);
+  renderAll();
+}
+
+function unassign(id, semiNum) {
+  state.semis[semiNum-1] = state.semis[semiNum-1].filter(i => i !== id);
+  const newP = [];
+  for (const c of COMMANDES_DATA) {
+    if (c.id === id || state.portfolio.includes(c.id)) newP.push(c.id);
+  }
+  state.portfolio = newP;
+  renderAll();
+}
+
+// ============================================================
+// INIT
+// ============================================================
+document.getElementById('topbar-week').textContent = JS_WEEK_CONFIG.label;
+document.getElementById('breadcrumb-week').textContent = 'Planning ' + JS_WEEK_CONFIG.number;
+renderAll();
+</script>
+
+
+</body></html>
