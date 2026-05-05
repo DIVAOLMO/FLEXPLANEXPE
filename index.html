@@ -1,243 +1,555 @@
 <!DOCTYPE html>
-<!-- saved from url=(0046)file:///C:/Users/omorel/Downloads/index_3.html -->
+<!-- saved from url=(0047)file:///C:/Users/omorel/Downloads/planning.html -->
 <html lang="fr"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Se connecter à demos</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kanban | [divalto] Flexio</title>
 <link href="./index_files/css2" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html, body {
-  height: 100%;
+html, body { height: 100%; }
+body {
   font-family: 'Titillium Web', Verdana, sans-serif;
-  background-color: rgb(0, 35, 55);
-  color: rgb(255, 255, 255);
+  font-size: 13px;
+  background: #fff;
+  color: rgb(2, 28, 44);
+  overflow-x: hidden;
 }
+body.dragging-active { user-select: none; cursor: grabbing !important; }
+body.dragging-active * { cursor: grabbing !important; }
 
-/* LAYOUT */
-.page {
-  min-height: 100vh;
+/* TOPBAR */
+.topbar {
+  background: rgb(0, 35, 55);
+  height: 56px;
+  padding: 0 0 0 0;
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  align-items: stretch;
+  justify-content: space-between;
+  position: sticky; top: 0; z-index: 100;
 }
-
-/* HEADER — logo flexio */
-#kc-header {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  padding: 40px 0 10px;
+.topbar-left { display: flex; align-items: stretch; }
+.topbar-divalto-wrap {
+  display: flex; align-items: center;
+  padding: 0 16px;
+  background: rgb(0, 35, 55);
 }
-#flexio-logo {
-  width: 220px;
-  height: 60px;
-  background-image: url('https://iam.flexio.io/auth/resources/4lnp1/login/flexio/img/flexio-logo.svg');
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: center;
+.topbar-divalto {
+  height: 28px; width: auto; object-fit: contain;
 }
-/* Fallback si l'image ne charge pas — on recrée le logo en CSS/texte */
-#flexio-logo-fallback {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+.topbar-divalto-text {
+  display: none;
+  color: white; font-weight: 700; font-size: 18px;
+  font-family: 'Titillium Web', Verdana, sans-serif;
 }
-#flexio-logo-fallback .chevron {
-  display: flex; gap: 3px;
+.topbar-app {
+  background: #002337;
+  display: flex; align-items: center;
+  padding: 0 20px; gap: 10px;
+  border-left: 4px solid #2dd4a0;
+  border-right: 1px solid rgba(255,255,255,0.08);
 }
-#flexio-logo-fallback .chevron span {
-  display: block;
-  width: 14px; height: 28px;
+.topbar-app-icon { font-size: 15px; }
+.topbar-app-title {
+  font-size: 14px; font-weight: 600; color: white;
+  font-family: 'Titillium Web', Verdana, sans-serif;
+  white-space: nowrap;
+}
+.topbar-right {
+  display: flex; align-items: center; gap: 16px; padding: 0 16px;
+}
+.topbar-bell { color: rgba(255,255,255,0.7); font-size: 20px; cursor: pointer; }
+.topbar-avatar {
+  width: 30px; height: 30px; border-radius: 50%;
+  background: #f5a623;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700; color: rgb(0, 35, 55);
+}
+.topbar-flexio { display: flex; align-items: center; gap: 5px; }
+.topbar-flexio-chevrons { display: flex; gap: 1px; }
+.topbar-flexio-chevrons span {
+  display: block; width: 9px; height: 18px;
   background: rgb(255, 133, 18);
-  clip-path: polygon(0 0, 60% 0, 100% 50%, 60% 100%, 0 100%, 40% 50%);
+  clip-path: polygon(0 0, 55% 0, 100% 50%, 55% 100%, 0 100%, 45% 50%);
 }
-#flexio-logo-fallback .chevron span:nth-child(2) {
-  margin-left: -6px;
-  opacity: 0.75;
-}
-#flexio-logo-fallback .logo-word {
-  font-family: 'Titillium Web', sans-serif;
-  font-size: 36px;
-  font-weight: 700;
-  color: white;
-  letter-spacing: -0.5px;
-}
-#flexio-logo-fallback .logo-word em {
-  font-style: normal;
-  color: rgb(255, 133, 18);
-}
-
-/* CLIENT LOGO + TITRE */
-.flx-header {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin: 24px 0 8px;
-}
-#client-logo {
-  width: 48px; height: 48px;
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  margin-bottom: 10px;
-}
-#kc-page-title {
-  font-size: 18px;
-  font-weight: 400;
-  color: white;
-  text-align: center;
-  letter-spacing: 0.03em;
-}
-
-/* FORM CONTAINER */
-#kc-content {
-  width: 100%;
-  max-width: 640px;
-  padding: 0 20px;
-}
-#kc-form-wrapper {
-  width: 100%;
-}
-
-/* FORM GROUPS */
-.flx-form-group {
-  margin-bottom: 16px;
-  position: relative;
-}
-.flx-label {
-  display: block;
-  font-size: 13px;
-  font-weight: 400;
-  color: rgb(255, 255, 255);
-  margin-bottom: 6px;
+.topbar-flexio-chevrons span:nth-child(2) { margin-left: -3px; }
+.topbar-flexio-text {
+  font-size: 17px; font-weight: 700; color: white;
   font-family: 'Titillium Web', Verdana, sans-serif;
 }
-.flx-input {
-  display: block;
-  width: 100%;
-  background-color: rgb(232, 240, 254);
-  border: none;
-  border-radius: 4.8px;
-  padding: 9.6px 12px;
-  font-size: 16px;
-  font-family: 'Titillium Web', Verdana, sans-serif;
-  color: rgb(0, 0, 0);
-  outline: none;
-  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-  height: 45px;
-}
-.flx-input:focus {
-  box-shadow: 0 0 0 3px rgba(255, 133, 18, 0.35);
-}
+.topbar-flexio-text em { font-style: normal; color: rgb(255, 133, 18); }
 
-/* MOT DE PASSE OUBLIÉ */
-.flx-reset-pwd {
-  text-align: right;
-  margin-top: 4px;
+/* BREADCRUMB */
+.breadcrumb {
+  padding: 0 20px; height: 38px;
+  font-size: 12px; color: #6b7a99;
+  border-bottom: 0.5px solid #dce3ee; background: white;
+  display: flex; align-items: center; justify-content: space-between;
 }
-.flx-reset-pwd a {
-  font-size: 13px;
-  color: rgb(200, 220, 240);
-  text-decoration: none;
-  font-family: 'Titillium Web', Verdana, sans-serif;
+.breadcrumb-left { display: flex; align-items: center; gap: 5px; }
+.bc-home {
+  width: 20px; height: 20px; background: #e8eff9; border-radius: 4px;
+  display: flex; align-items: center; justify-content: center; font-size: 11px;
 }
-.flx-reset-pwd a:hover { text-decoration: underline; }
-
-/* BOUTON CONNEXION */
-.btn-primary {
-  display: block;
-  width: 100%;
-  background-color: rgb(255, 133, 18);
-  color: rgb(0, 35, 55);
-  border: none;
-  border-radius: 6px;
-  padding: 9.6px 12px 7.2px;
-  font-size: 18px;
-  font-weight: 600;
+.bc-sep { color: #c0cad8; }
+.bc-item { display: flex; align-items: center; gap: 4px; font-size: 12px; color: #4a5a7a; }
+.bc-icon {
+  width: 16px; height: 16px; background: #e8eff9; border-radius: 3px;
+  display: flex; align-items: center; justify-content: center; font-size: 9px;
+}
+.bc-current { font-size: 12px; color: rgb(2,28,44); font-weight: 600; display: flex; align-items: center; gap: 4px; }
+.btn-refresh {
+  background: rgb(0, 35, 55); color: white; border: none;
+  border-radius: 6px; padding: 6px 16px;
+  font-size: 12px; font-weight: 600;
   font-family: 'Titillium Web', Verdana, sans-serif;
   cursor: pointer;
-  text-align: center;
-  vertical-align: middle;
-  transition: background-color 0.15s;
-  height: 43px;
-  letter-spacing: 0.03em;
 }
-.btn-primary:hover { background-color: rgb(230, 110, 0); }
 
-/* ERROR */
-.error-msg {
-  color: rgb(255, 120, 100);
-  font-size: 13px;
-  text-align: center;
-  min-height: 18px;
-  margin-bottom: 6px;
+/* PAGE TITLE */
+.page-title {
+  padding: 10px 20px 8px; font-size: 14px; font-weight: 600;
+  color: rgb(2, 28, 44); background: white;
   font-family: 'Titillium Web', Verdana, sans-serif;
+  border-bottom: 0.5px solid #f0f2f5;
 }
+.page-week { font-size: 12px; font-weight: 400; color: #6b7a99; margin-left: 8px; }
+
+/* MAIN */
+.main {
+  display: flex; gap: 12px; padding: 12px 20px 20px;
+  background: white; min-height: calc(100vh - 160px);
+  align-items: flex-start; overflow-x: auto;
+}
+.col-portfolio { width: 220px; flex-shrink: 0; display: flex; flex-direction: column; gap: 8px; }
+.col-semis { display: flex; flex: 1; gap: 10px; align-items: flex-start; min-width: 0; }
+.col-semi { flex: 1; display: flex; flex-direction: column; gap: 8px; min-width: 180px; }
+
+/* COLUMN HEADER */
+.col-header {
+  background: white; border-radius: 10px;
+  border: 0.5px solid #dce3ee; padding: 10px 12px; user-select: none;
+}
+.col-header-row { display: flex; align-items: center; justify-content: space-between; }
+.col-header-left { display: flex; align-items: center; gap: 8px; }
+.plus-btn {
+  width: 22px; height: 22px; border-radius: 50%;
+  border: 1.5px solid rgb(2, 28, 44);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; color: rgb(2, 28, 44); cursor: pointer; flex-shrink: 0; line-height: 1;
+}
+.col-title { font-weight: 600; font-size: 13px; color: rgb(2, 28, 44); line-height: 1.2; }
+.sub-counter { font-size: 10px; color: #6b7a99; margin-top: 2px; }
+.col-header-right { display: flex; align-items: center; gap: 6px; }
+.counter { font-size: 11px; color: #6b7a99; white-space: nowrap; }
+.three-dots { font-size: 16px; color: #6b7a99; cursor: pointer; padding: 0 2px; }
+
+/* CARDS LIST */
+.cards-list {
+  display: flex; flex-direction: column; gap: 6px;
+  min-height: 48px; border-radius: 8px; padding: 2px;
+  transition: background 0.12s;
+}
+.cards-list.drop-target {
+  background: #f0f5ff; outline: 1.5px dashed #b0bdd4; outline-offset: -2px;
+}
+
+/* CARD */
+.card {
+  background: #E8EFF9; border-radius: 8px; border: 0.5px solid #c5d3e8;
+  padding: 9px 26px 9px 8px; display: flex; gap: 7px; align-items: flex-start;
+  position: relative; user-select: none; -webkit-user-select: none;
+  cursor: grab; transition: box-shadow 0.12s;
+}
+.card:hover { box-shadow: 0 2px 8px rgba(0,35,55,0.12); }
+.card.is-ghost { opacity: 0.25; pointer-events: none; }
+.dd { display: grid; grid-template-columns: repeat(2, 3px); gap: 2.5px; padding-top: 3px; flex-shrink: 0; }
+.dd span { width: 3px; height: 3px; border-radius: 50%; background: #8fa3c0; display: block; }
+.cb { flex: 1; min-width: 0; }
+.cr { font-size: 12px; font-weight: 600; color: rgb(2, 28, 44); margin-bottom: 2px; }
+.cc { font-size: 11px; color: #4a5a7a; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cf { font-size: 11px; color: #6b7a99; }
+.cx {
+  position: absolute; top: 6px; right: 8px; font-size: 12px; color: #8fa3c0;
+  cursor: pointer; line-height: 1; padding: 1px 3px; border-radius: 3px; z-index: 2;
+}
+.cx:hover { color: #c0392b; background: #fdecea; }
+
+/* WIDGET SEMI */
+.semi-widget {
+  background: white; border-radius: 8px;
+  border: 0.5px solid #dce3ee; padding: 8px 12px;
+}
+.semi-widget-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.semi-widget-item { flex: 1; text-align: center; }
+.semi-widget-label {
+  font-size: 9px; color: #6b7a99; text-transform: uppercase;
+  letter-spacing: 0.05em; margin-bottom: 3px;
+}
+.semi-widget-value { font-size: 13px; font-weight: 600; color: rgb(2, 28, 44); }
+.semi-widget-sep { width: 1px; height: 28px; background: #dce3ee; flex-shrink: 0; }
+
+/* DRAG CLONE */
+#drag-clone {
+  position: fixed; pointer-events: none; z-index: 9999;
+  opacity: 0.93; transform: rotate(1.5deg) scale(1.03);
+  box-shadow: 0 8px 24px rgba(0,35,55,0.18);
+  border-radius: 8px; background: #E8EFF9; border: 0.5px solid #c5d3e8;
+  padding: 9px 26px 9px 8px; display: flex; gap: 7px; align-items: flex-start;
+  font-family: 'Titillium Web', Verdana, sans-serif; font-size: 13px; color: rgb(2,28,44);
+}
+.insert-line {
+  height: 3px; background: #378ADD; border-radius: 2px;
+  margin: 0 2px; pointer-events: none; flex-shrink: 0;
+}
+.save-indicator {
+  font-size: 10px; color: #2dd4a0; opacity: 0; transition: opacity 0.3s;
+  position: fixed; bottom: 12px; right: 16px; background: #e6faf4;
+  padding: 4px 10px; border-radius: 10px; border: 0.5px solid #a0e8d0;
+}
+.save-indicator.visible { opacity: 1; }
 </style>
 </head>
-<body>
-<div class="page">
+<body class="">
 
-  <!-- HEADER LOGO -->
-  <div id="kc-header">
-    <div id="flexio-logo-fallback">
-      <div class="chevron">
-        <span></span><span></span>
-      </div>
-      <span class="logo-word">flex<em>io</em></span>
+<script>
+// =====================================================
+// MODIFIER ICI POUR CHANGER LA SEMAINE DE DEMO
+// =====================================================
+const JS_WEEK_CONFIG = {
+  label: "Semaine 18 · 29 avr – 03 mai 2025",
+  number: "S18"
+};
+
+const COMMANDES_DATA = [
+  { id: "CMD-0041", client: "Dupont Industrie",   dateExp: "29/04", modeExp: "Route",   poids: 320,  volume: 1.8 },
+  { id: "CMD-0042", client: "Martin & Fils",      dateExp: "29/04", modeExp: "Express", poids: 510,  volume: 2.4 },
+  { id: "CMD-0043", client: "Leroy Matériaux",    dateExp: "30/04", modeExp: "Route",   poids: 780,  volume: 4.1 },
+  { id: "CMD-0044", client: "Aubert Logistique",  dateExp: "30/04", modeExp: "Route",   poids: 1200, volume: 6.0 },
+  { id: "CMD-0045", client: "Giraud SAS",         dateExp: "01/05", modeExp: "Express", poids: 440,  volume: 2.2 },
+  { id: "CMD-0046", client: "Bernard & Co",       dateExp: "01/05", modeExp: "Route",   poids: 390,  volume: 2.0 },
+  { id: "CMD-0047", client: "Renard & Associés",  dateExp: "02/05", modeExp: "Route",   poids: 980,  volume: 4.8 },
+  { id: "CMD-0048", client: "Favre Industrie",    dateExp: "02/05", modeExp: "Route",   poids: 400,  volume: 2.0 },
+  { id: "CMD-0049", client: "Morin Négoce",       dateExp: "03/05", modeExp: "Express", poids: 660,  volume: 3.3 },
+  { id: "CMD-0050", client: "Petit Distribution", dateExp: "03/05", modeExp: "Route",   poids: 290,  volume: 1.5 },
+];
+
+const NB_SEMIS = 3;
+const LS_KEY = 'flexio_planning_' + JS_WEEK_CONFIG.number;
+
+function getCmdById(id) { return COMMANDES_DATA.find(c => c.id === id); }
+function fmtPoids(p) { return p >= 1000 ? (p/1000).toFixed(1).replace('.',',') + ' t' : p + ' kg'; }
+function fmtVol(v)   { return v.toFixed(1).replace('.',',') + ' m³'; }
+
+function loadState() {
+  try {
+    const saved = localStorage.getItem(LS_KEY);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      const validIds = new Set(COMMANDES_DATA.map(c => c.id));
+      parsed.semis = parsed.semis.map(s => s.filter(id => validIds.has(id)));
+      const assignedIds = new Set(parsed.semis.flat());
+      parsed.portfolio = COMMANDES_DATA.map(c => c.id).filter(id => !assignedIds.has(id));
+      return parsed;
+    }
+  } catch(e) {}
+  return { semis: Array.from({length: NB_SEMIS}, () => []), portfolio: COMMANDES_DATA.map(c => c.id) };
+}
+
+const state = loadState();
+
+function saveState() {
+  try {
+    localStorage.setItem(LS_KEY, JSON.stringify({ semis: state.semis }));
+    const ind = document.getElementById('save-indicator');
+    if (ind) { ind.classList.add('visible'); clearTimeout(ind._timer); ind._timer = setTimeout(() => ind.classList.remove('visible'), 1500); }
+  } catch(e) {}
+}
+</script>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="topbar-divalto-wrap">
+      <img class="topbar-divalto" src="./index_files/logo" alt="divalto" onerror="this.style.display=&#39;none&#39;;document.getElementById(&#39;dv-fb&#39;).style.display=&#39;block&#39;">
+      <span id="dv-fb" style="display:none;color:white;font-weight:700;font-size:16px;font-family:&#39;Titillium Web&#39;,sans-serif;">divalto</span>
+    </div>
+    <div class="topbar-app">
+      <span class="topbar-app-icon">🚛</span>
+      <span class="topbar-app-title">OLMO KANBAN EXPE</span>
     </div>
   </div>
-
-  <!-- CLIENT LOGO + TITRE -->
-  <header class="flx-header">
-    <div id="client-logo" style="background-image:url(&#39;https://divalto-avv.flexio.io/logo&#39;)"></div>
-    <h1 id="kc-page-title">Connexion</h1>
-  </header>
-
-  <!-- FORM -->
-  <div id="kc-content">
-    <div id="kc-form-wrapper">
-
-      <div class="flx-form-group">
-        <label for="username" class="flx-label">Identifiant</label>
-        <input id="username" class="flx-input" name="username" type="text" value="demo@divalto.com" autocomplete="off">
-      </div>
-
-      <div class="flx-form-group">
-        <label for="password" class="flx-label">Mot de passe</label>
-        <input id="password" class="flx-input" name="password" type="password" value="demo2025" autocomplete="off">
-      </div>
-
-      <div class="flx-form-group">
-        <div class="flx-reset-pwd">
-          <span><a href="file:///C:/Users/omorel/Downloads/index_3.html#">Mot de passe oublié ?</a></span>
-        </div>
-      </div>
-
-      <div class="error-msg" id="error-msg"></div>
-
-      <div class="flx-form-group">
-        <input class="btn-primary" type="button" value="Connexion" onclick="doLogin()">
-      </div>
-
+  <div class="topbar-right">
+    <span class="topbar-bell">🔔</span>
+    <div class="topbar-avatar">O</div>
+    <div class="topbar-flexio">
+      <div class="topbar-flexio-chevrons"><span></span><span></span></div>
+      <span class="topbar-flexio-text">flex<em>io</em></span>
     </div>
   </div>
 </div>
 
+<!-- BREADCRUMB -->
+<div class="breadcrumb">
+  <div class="breadcrumb-left">
+    <div class="bc-home">🏠</div>
+    <span class="bc-sep">›</span>
+    <div class="bc-item">
+      <div class="bc-icon">🚛</div>
+      <span>OLMO KANBAN EXPE</span>
+    </div>
+    <span class="bc-sep">›</span>
+    <div class="bc-current">
+      <div class="bc-icon">📋</div>
+      <span>Kanban</span>
+    </div>
+  </div>
+  <button class="btn-refresh">Rafraîchir</button>
+</div>
+
+<!-- PAGE TITLE -->
+<div class="page-title">
+  Kanban expédition
+  <span class="page-week" id="page-week">· Semaine 18 · 29 avr – 03 mai 2025</span>
+</div>
+
+<!-- MAIN -->
+<div class="main" id="main">
+  <div class="col-portfolio">
+    <div class="col-header">
+      <div class="col-header-row">
+        <div class="col-header-left">
+          <div class="plus-btn">+</div>
+          <div>
+            <div class="col-title">Portefeuille</div>
+            <div class="sub-counter" id="portfolio-sub">5,1 t · 25,9 m³</div>
+          </div>
+        </div>
+        <div class="col-header-right">
+          <span class="counter" id="portfolio-counter">1–8/10 ↻</span>
+          <span class="three-dots">⋮</span>
+        </div>
+      </div>
+    </div>
+    <div class="cards-list" id="portfolio-list" data-zone="portfolio"><div class="card" data-id="CMD-0043" data-zone="portfolio"><div class="dd"><span></span><span></span><span></span><span></span><span></span><span></span></div><div class="cb"><div class="cr">CMD-0043</div><div class="cc">Leroy Matériaux</div><div class="cf">30/04 · Route · 780 kg · 4,1 m³</div></div></div><div class="card" data-id="CMD-0044" data-zone="portfolio"><div class="dd"><span></span><span></span><span></span><span></span><span></span><span></span></div><div class="cb"><div class="cr">CMD-0044</div><div class="cc">Aubert Logistique</div><div class="cf">30/04 · Route · 1,2 t · 6,0 m³</div></div></div><div class="card" data-id="CMD-0045" data-zone="portfolio"><div class="dd"><span></span><span></span><span></span><span></span><span></span><span></span></div><div class="cb"><div class="cr">CMD-0045</div><div class="cc">Giraud SAS</div><div class="cf">01/05 · Express · 440 kg · 2,2 m³</div></div></div><div class="card" data-id="CMD-0046" data-zone="portfolio"><div class="dd"><span></span><span></span><span></span><span></span><span></span><span></span></div><div class="cb"><div class="cr">CMD-0046</div><div class="cc">Bernard &amp; Co</div><div class="cf">01/05 · Route · 390 kg · 2,0 m³</div></div></div><div class="card" data-id="CMD-0047" data-zone="portfolio"><div class="dd"><span></span><span></span><span></span><span></span><span></span><span></span></div><div class="cb"><div class="cr">CMD-0047</div><div class="cc">Renard &amp; Associés</div><div class="cf">02/05 · Route · 980 kg · 4,8 m³</div></div></div><div class="card" data-id="CMD-0048" data-zone="portfolio"><div class="dd"><span></span><span></span><span></span><span></span><span></span><span></span></div><div class="cb"><div class="cr">CMD-0048</div><div class="cc">Favre Industrie</div><div class="cf">02/05 · Route · 400 kg · 2,0 m³</div></div></div><div class="card" data-id="CMD-0049" data-zone="portfolio"><div class="dd"><span></span><span></span><span></span><span></span><span></span><span></span></div><div class="cb"><div class="cr">CMD-0049</div><div class="cc">Morin Négoce</div><div class="cf">03/05 · Express · 660 kg · 3,3 m³</div></div></div><div class="card" data-id="CMD-0050" data-zone="portfolio"><div class="dd"><span></span><span></span><span></span><span></span><span></span><span></span></div><div class="cb"><div class="cr">CMD-0050</div><div class="cc">Petit Distribution</div><div class="cf">03/05 · Route · 290 kg · 1,5 m³</div></div></div></div>
+  </div>
+  <div class="col-semis" id="semis-container"><div class="col-semi"><div class="col-header"><div class="col-header-row"><div class="col-header-left"><div class="plus-btn">+</div><div><div class="col-title">Semi 1</div><div class="sub-counter">2 commandes</div></div></div><div class="col-header-right"><span class="counter">1–2/2 ↻</span><span class="three-dots">⋮</span></div></div></div><div class="cards-list" data-zone="semi-1"><div class="card" data-id="CMD-0042" data-zone="semi-1"><div class="dd"><span></span><span></span><span></span><span></span><span></span><span></span></div><div class="cb"><div class="cr">CMD-0042</div><div class="cc">Martin &amp; Fils</div><div class="cf">29/04 · Express · 510 kg · 2,4 m³</div></div><span class="cx">✕</span></div><div class="card" data-id="CMD-0041" data-zone="semi-1"><div class="dd"><span></span><span></span><span></span><span></span><span></span><span></span></div><div class="cb"><div class="cr">CMD-0041</div><div class="cc">Dupont Industrie</div><div class="cf">29/04 · Route · 320 kg · 1,8 m³</div></div><span class="cx">✕</span></div></div><div class="semi-widget"><div class="semi-widget-row"><div class="semi-widget-item"><div class="semi-widget-label">Poids total</div><div class="semi-widget-value">830 kg</div></div><div class="semi-widget-sep"></div><div class="semi-widget-item"><div class="semi-widget-label">Volume total</div><div class="semi-widget-value">4,2 m³</div></div></div></div></div><div class="col-semi"><div class="col-header"><div class="col-header-row"><div class="col-header-left"><div class="plus-btn">+</div><div><div class="col-title">Semi 2</div><div class="sub-counter">0 commande</div></div></div><div class="col-header-right"><span class="counter">1–0/0 ↻</span><span class="three-dots">⋮</span></div></div></div><div class="cards-list" data-zone="semi-2"></div><div class="semi-widget"><div class="semi-widget-row"><div class="semi-widget-item"><div class="semi-widget-label">Poids total</div><div class="semi-widget-value">0 kg</div></div><div class="semi-widget-sep"></div><div class="semi-widget-item"><div class="semi-widget-label">Volume total</div><div class="semi-widget-value">0,0 m³</div></div></div></div></div><div class="col-semi"><div class="col-header"><div class="col-header-row"><div class="col-header-left"><div class="plus-btn">+</div><div><div class="col-title">Semi 3</div><div class="sub-counter">0 commande</div></div></div><div class="col-header-right"><span class="counter">1–0/0 ↻</span><span class="three-dots">⋮</span></div></div></div><div class="cards-list" data-zone="semi-3"></div><div class="semi-widget"><div class="semi-widget-row"><div class="semi-widget-item"><div class="semi-widget-label">Poids total</div><div class="semi-widget-value">0 kg</div></div><div class="semi-widget-sep"></div><div class="semi-widget-item"><div class="semi-widget-label">Volume total</div><div class="semi-widget-value">0,0 m³</div></div></div></div></div></div>
+</div>
+
+<div id="drag-clone" style="display: none; width: 216px; left: 317px; top: 201.594px;"><div class="dd"><span></span><span></span><span></span><span></span><span></span><span></span></div><div class="cb"><div class="cr">CMD-0042</div><div class="cc">Martin &amp; Fils</div><div class="cf">29/04 · Express · 510 kg · 2,4 m³</div></div></div>
+<div class="save-indicator" id="save-indicator">✓ Sauvegardé</div>
+
 <script>
-function doLogin() {
-  const email = document.getElementById('username').value.trim();
-  const password = document.getElementById('password').value;
-  const err = document.getElementById('error-msg');
-  if (email === 'demo@divalto.com' && password === 'demo2025') {
-    sessionStorage.setItem('flexio_logged', '1');
-    window.location.href = 'planning.html';
+function renderPortfolio() {
+  const list = document.getElementById('portfolio-list');
+  list.innerHTML = '';
+  const ids = state.portfolio;
+  if (ids.length === 0) {
+    list.innerHTML = '<div style="padding:18px 10px;text-align:center;font-size:11px;color:#b0bdd4;">Toutes les commandes sont affectées</div>';
   } else {
-    err.textContent = 'Identifiant ou mot de passe incorrect.';
+    ids.forEach(id => list.appendChild(makeCard(id, 'portfolio', null)));
   }
+  const pt = ids.reduce((s,id)=>s+getCmdById(id).poids,0);
+  const vt = ids.reduce((s,id)=>s+getCmdById(id).volume,0);
+  document.getElementById('portfolio-counter').textContent = '1–'+ids.length+'/'+COMMANDES_DATA.length+' ↻';
+  document.getElementById('portfolio-sub').textContent = ids.length > 0 ? fmtPoids(pt)+' · '+fmtVol(vt) : '—';
 }
-document.addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+
+function renderSemis() {
+  const container = document.getElementById('semis-container');
+  container.innerHTML = '';
+  state.semis.forEach((semiIds, si) => {
+    const sn = si + 1;
+    const pt = semiIds.reduce((s,id)=>s+getCmdById(id).poids,0);
+    const vt = semiIds.reduce((s,id)=>s+getCmdById(id).volume,0);
+    const nb = semiIds.length;
+
+    const col = document.createElement('div');
+    col.className = 'col-semi';
+
+    const hdr = document.createElement('div');
+    hdr.className = 'col-header';
+    hdr.innerHTML =
+      '<div class="col-header-row">'+
+        '<div class="col-header-left">'+
+          '<div class="plus-btn">+</div>'+
+          '<div>'+
+            '<div class="col-title">Semi '+sn+'</div>'+
+            '<div class="sub-counter">'+nb+' commande'+(nb>1?'s':'')+'</div>'+
+          '</div>'+
+        '</div>'+
+        '<div class="col-header-right">'+
+          '<span class="counter">1–'+nb+'/'+nb+' ↻</span>'+
+          '<span class="three-dots">⋮</span>'+
+        '</div>'+
+      '</div>';
+    col.appendChild(hdr);
+
+    const list = document.createElement('div');
+    list.className = 'cards-list';
+    list.dataset.zone = 'semi-'+sn;
+    semiIds.forEach(id => list.appendChild(makeCard(id,'semi',sn)));
+    col.appendChild(list);
+
+    const widget = document.createElement('div');
+    widget.className = 'semi-widget';
+    widget.innerHTML =
+      '<div class="semi-widget-row">'+
+        '<div class="semi-widget-item">'+
+          '<div class="semi-widget-label">Poids total</div>'+
+          '<div class="semi-widget-value">'+fmtPoids(pt)+'</div>'+
+        '</div>'+
+        '<div class="semi-widget-sep"></div>'+
+        '<div class="semi-widget-item">'+
+          '<div class="semi-widget-label">Volume total</div>'+
+          '<div class="semi-widget-value">'+fmtVol(vt)+'</div>'+
+        '</div>'+
+      '</div>';
+    col.appendChild(widget);
+    container.appendChild(col);
+  });
+}
+
+function makeCard(id, zone, semiNum) {
+  const cmd = getCmdById(id);
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.dataset.id = id;
+  card.dataset.zone = zone === 'portfolio' ? 'portfolio' : 'semi-'+semiNum;
+  card.innerHTML =
+    '<div class="dd"><span></span><span></span><span></span><span></span><span></span><span></span></div>'+
+    '<div class="cb">'+
+      '<div class="cr">'+cmd.id+'</div>'+
+      '<div class="cc">'+cmd.client+'</div>'+
+      '<div class="cf">'+cmd.dateExp+' · '+cmd.modeExp+' · '+fmtPoids(cmd.poids)+' · '+fmtVol(cmd.volume)+'</div>'+
+    '</div>'+
+    (zone !== 'portfolio' ? '<span class="cx">✕</span>' : '');
+  card.addEventListener('mousedown', onMouseDown);
+  if (zone !== 'portfolio') {
+    const cx = card.querySelector('.cx');
+    cx.addEventListener('mousedown', e => e.stopPropagation());
+    cx.addEventListener('click', () => unassign(id, semiNum));
+  }
+  return card;
+}
+
+function renderAll() { renderPortfolio(); renderSemis(); }
+
+let drag = null;
+
+function onMouseDown(e) {
+  if (e.button !== 0) return;
+  if (e.target.classList.contains('cx')) return;
+  e.preventDefault();
+  const card = e.currentTarget;
+  const rect = card.getBoundingClientRect();
+  const clone = document.getElementById('drag-clone');
+  clone.innerHTML =
+    '<div class="dd"><span></span><span></span><span></span><span></span><span></span><span></span></div>'+
+    '<div class="cb">'+
+      '<div class="cr">'+card.querySelector('.cr').textContent+'</div>'+
+      '<div class="cc">'+card.querySelector('.cc').textContent+'</div>'+
+      '<div class="cf">'+card.querySelector('.cf').textContent+'</div>'+
+    '</div>';
+  clone.style.display = 'flex';
+  clone.style.width = rect.width + 'px';
+  clone.style.left = rect.left + 'px';
+  clone.style.top  = rect.top  + 'px';
+  drag = { id: card.dataset.id, srcZone: card.dataset.zone, offsetX: e.clientX - rect.left, offsetY: e.clientY - rect.top, clone, ghost: card };
+  card.classList.add('is-ghost');
+  document.body.classList.add('dragging-active');
+  document.addEventListener('mousemove', onMouseMove);
+  document.addEventListener('mouseup', onMouseUp);
+}
+
+function onMouseMove(e) {
+  if (!drag) return;
+  drag.clone.style.left = (e.clientX - drag.offsetX) + 'px';
+  drag.clone.style.top  = (e.clientY - drag.offsetY) + 'px';
+  document.querySelectorAll('.cards-list').forEach(l => l.classList.remove('drop-target'));
+  removeInsertLine();
+  const hit = getZoneAt(e.clientX, e.clientY);
+  if (hit) { hit.list.classList.add('drop-target'); showInsertLine(hit.list, hit.insertIdx); }
+}
+
+function onMouseUp(e) {
+  if (!drag) return;
+  document.removeEventListener('mousemove', onMouseMove);
+  document.removeEventListener('mouseup', onMouseUp);
+  document.querySelectorAll('.cards-list').forEach(l => l.classList.remove('drop-target'));
+  removeInsertLine();
+  drag.clone.style.display = 'none';
+  document.body.classList.remove('dragging-active');
+  const hit = getZoneAt(e.clientX, e.clientY);
+  if (hit) {
+    if (hit.zoneId !== drag.srcZone) moveCard(drag.id, drag.srcZone, hit.zoneId, hit.insertIdx);
+    else reorderCard(drag.id, hit.zoneId, hit.insertIdx);
+  } else { drag.ghost.classList.remove('is-ghost'); }
+  drag = null;
+}
+
+function getZoneAt(x, y) {
+  for (const list of document.querySelectorAll('.cards-list')) {
+    const r = list.getBoundingClientRect();
+    if (x >= r.left-10 && x <= r.right+10 && y >= r.top-10 && y <= r.bottom+10) {
+      const cards = [...list.querySelectorAll('.card:not(.is-ghost)')];
+      let insertIdx = cards.length;
+      for (let i = 0; i < cards.length; i++) {
+        const cr = cards[i].getBoundingClientRect();
+        if (y < cr.top + cr.height/2) { insertIdx = i; break; }
+      }
+      return { list, zoneId: list.dataset.zone, insertIdx };
+    }
+  }
+  return null;
+}
+
+function showInsertLine(list, insertIdx) {
+  const line = document.createElement('div');
+  line.className = 'insert-line'; line.id = 'insert-line';
+  const cards = [...list.querySelectorAll('.card:not(.is-ghost)')];
+  if (insertIdx >= cards.length) list.appendChild(line);
+  else list.insertBefore(line, cards[insertIdx]);
+}
+
+function removeInsertLine() {
+  const l = document.getElementById('insert-line');
+  if (l) l.remove();
+}
+
+function moveCard(id, srcZone, targetZone, insertIdx) {
+  if (srcZone === 'portfolio') { state.portfolio = state.portfolio.filter(i => i !== id); }
+  else { const si = parseInt(srcZone.replace('semi-',''))-1; state.semis[si] = state.semis[si].filter(i => i !== id); }
+  if (targetZone === 'portfolio') {
+    const newP = [];
+    for (const c of COMMANDES_DATA) { if (c.id === id || state.portfolio.includes(c.id)) newP.push(c.id); }
+    state.portfolio = newP;
+  } else {
+    const ti = parseInt(targetZone.replace('semi-',''))-1;
+    if (!state.semis[ti].includes(id)) state.semis[ti].splice(insertIdx, 0, id);
+  }
+  saveState(); renderAll();
+}
+
+function reorderCard(id, zoneId, insertIdx) {
+  const arr = zoneId === 'portfolio' ? state.portfolio : state.semis[parseInt(zoneId.replace('semi-',''))-1];
+  const from = arr.indexOf(id);
+  if (from === -1) { renderAll(); return; }
+  arr.splice(from, 1);
+  arr.splice(insertIdx > from ? insertIdx - 1 : insertIdx, 0, id);
+  saveState(); renderAll();
+}
+
+function unassign(id, semiNum) {
+  state.semis[semiNum-1] = state.semis[semiNum-1].filter(i => i !== id);
+  const newP = [];
+  for (const c of COMMANDES_DATA) { if (c.id === id || state.portfolio.includes(c.id)) newP.push(c.id); }
+  state.portfolio = newP;
+  saveState(); renderAll();
+}
+
+document.getElementById('page-week').textContent = '· ' + JS_WEEK_CONFIG.label;
+renderAll();
 </script>
 
 
